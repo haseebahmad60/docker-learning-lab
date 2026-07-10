@@ -1,0 +1,527 @@
+Perfect! 🎉 Congratulations on finishing **Day 5**. This is one of the biggest milestones in Week 1 because you've now learned the standard way professionals run applications with multiple containers.
+
+Below are your notes in the same style as the previous days.
+
+---
+
+# 🐳 Docker Week 1 — Day 5 Notes (Docker Compose)
+
+## 📌 Essential Commands
+
+### `docker compose version`
+
+**Purpose:** Check if Docker Compose is installed and view its version.
+
+```bash
+docker compose version
+```
+
+---
+
+### `docker compose up`
+
+**Purpose:** Read `compose.yaml`, create the required resources, and start all services.
+
+```bash
+docker compose up
+```
+
+**Use when:**
+
+* Starting your application
+* Using an already built image
+
+---
+
+### `docker compose up --build`
+
+**Purpose:** Rebuild the image(s) before starting the containers.
+
+```bash
+docker compose up --build
+```
+
+**Use when:**
+
+* You changed the `Dockerfile`
+* You changed files that need to be copied into the image
+* You want to ensure you're running the latest image
+
+---
+
+### `docker compose up -d`
+
+**Purpose:** Run services in the background (Detached Mode).
+
+```bash
+docker compose up -d
+```
+
+**Use when:**
+
+* You want your terminal free while the containers continue running
+
+---
+
+### `docker compose ps`
+
+**Purpose:** Show the status of all services in the current Compose project.
+
+```bash
+docker compose ps
+```
+
+Useful to check:
+
+* Running containers
+* Container names
+* Ports
+* Status
+
+---
+
+### `docker compose logs`
+
+**Purpose:** Display logs from Compose-managed services.
+
+```bash
+
+docker compose logs
+```
+
+Useful for debugging.
+
+---
+
+### `docker compose down`
+
+**Purpose:** Stop and remove everything created by Docker Compose.
+
+```bash
+docker compose down
+```
+
+Removes:
+
+* Containers
+* Compose network
+
+Keeps:
+
+* Images
+* Volumes (unless explicitly removed)
+
+---
+
+# 📖 Theory
+
+## What is Docker Compose?
+
+Docker Compose is a tool used to **define and manage multi-container Docker applications** using a single configuration file called `compose.yaml`.
+
+Instead of running many `docker run` commands manually, Compose starts all required services with one command.
+
+Example:
+
+```text
+docker compose up
+```
+
+---
+
+## Why Docker Compose?
+
+Without Compose:
+
+```text
+docker run ...
+
+docker run ...
+
+docker run ...
+
+docker run ...
+```
+
+Every command must include:
+
+* Ports
+* Networks
+* Volumes
+* Environment variables
+* Container names
+
+This becomes difficult for large projects.
+
+With Compose:
+
+```text
+compose.yaml
+
+↓
+
+docker compose up
+```
+
+Everything starts automatically.
+
+---
+
+## What is `compose.yaml`?
+
+`compose.yaml` is the configuration file that tells Docker:
+
+* Which services to create
+* Which images to use or build
+* Which ports to expose
+* Which volumes to mount
+* Which environment variables to set
+* How services communicate
+
+Think of it as the **blueprint** of your application.
+
+---
+
+## Compose Workflow
+
+When you run:
+
+```bash
+docker compose up --build
+```
+
+Docker performs these steps:
+
+```text
+Read compose.yaml
+        │
+        ▼
+Read Dockerfile (if build is used)
+        │
+        ▼
+Build image
+        │
+        ▼
+Create Docker network
+        │
+        ▼
+Create containers
+        │
+        ▼
+Connect containers to the network
+        │
+        ▼
+Start all services
+```
+
+---
+
+## Important Keys in `compose.yaml`
+
+### `services`
+
+Defines every container (service) in your application.
+
+Example:
+
+```yaml
+services:
+```
+
+---
+
+### `build`
+
+```yaml
+build: .
+```
+
+Builds an image from the Dockerfile in the current directory.
+
+Use this for **your own applications**.
+
+---
+
+### `image`
+
+```yaml
+image: nginx
+```
+
+Downloads an already existing image from Docker Hub.
+
+Use this for services like:
+
+* Nginx
+* PostgreSQL
+* Redis
+* MySQL
+
+---
+
+## Difference Between `build` and `image`
+
+### `build`
+
+```text
+Your code
+
+↓
+
+Dockerfile
+
+↓
+
+Your custom image
+```
+
+---
+
+### `image`
+
+```text
+Docker Hub
+
+↓
+
+Existing image
+
+↓
+
+Run container
+```
+
+---
+
+## Ports
+
+Example:
+
+```yaml
+ports:
+  - "8000:8000"
+```
+
+Format:
+
+```text
+HOST : CONTAINER
+```
+
+Meaning:
+
+```text
+Browser
+
+↓
+
+localhost:8000
+
+↓
+
+Container Port 8000
+```
+
+---
+
+## Volumes
+
+Example:
+
+```yaml
+volumes:
+  - .:/app
+```
+
+Shares your project folder with the container.
+
+Useful during development because code changes are immediately visible inside the container.
+
+---
+
+## Environment Variables
+
+Example:
+
+```yaml
+environment:
+  DB_HOST: database
+```
+
+Allows configuration values to be passed into the container without hardcoding them into your application.
+
+---
+
+## Docker Compose Automatically Creates a Network
+
+Every Compose project gets its own Docker network.
+
+Example:
+
+```text
+Web Container
+        │
+        ▼
+Compose Network
+        ▲
+Database Container
+```
+
+Containers communicate using **service names** instead of IP addresses.
+
+Example:
+
+```python
+host = "database"
+```
+
+instead of
+
+```python
+host = "localhost"
+```
+
+---
+
+## Why `0.0.0.0`?
+
+Inside a container:
+
+```python
+HTTPServer(("0.0.0.0", 8000), Handler)
+```
+
+means:
+
+> Listen on all network interfaces.
+
+Using `localhost` would only allow connections from inside the container itself.
+
+---
+
+## Difference Between `docker stop` and `docker compose down`
+
+### `docker stop`
+
+Stops a running container.
+
+The container still exists and can be started again.
+
+```text
+Running
+
+↓
+
+Stopped
+```
+
+---
+
+### `docker compose down`
+
+Stops the containers **and removes**:
+
+* Containers
+* Compose network
+
+The next `docker compose up` recreates everything.
+
+Think:
+
+```text
+docker stop
+
+↓
+
+Pause
+```
+
+```text
+docker compose down
+
+↓
+
+Clean shutdown
+```
+
+---
+
+## Why Docker Compose is Important
+
+Almost every modern application uses multiple services.
+
+Examples:
+
+### Flask + PostgreSQL
+
+```text
+Flask API
+
+↓
+
+PostgreSQL
+```
+
+---
+
+### Next.js + PostgreSQL
+
+```text
+Next.js
+
+↓
+
+API
+
+↓
+
+Database
+```
+
+---
+
+### AI Application
+
+```text
+FastAPI
+
+↓
+
+Redis
+
+↓
+
+Vector Database
+
+↓
+
+LLM
+```
+
+Docker Compose starts all of them with one command.
+
+---
+
+# 🧠 Key Takeaways
+
+* Docker Compose manages **multiple containers** from a single configuration file.
+* `compose.yaml` describes your application's services and settings.
+* `build:` creates your own image from a Dockerfile.
+* `image:` downloads an existing image from Docker Hub.
+* `docker compose up` starts all services.
+* `docker compose up --build` rebuilds images before starting.
+* `docker compose down` stops and removes Compose-created containers and networks.
+* Compose automatically creates a dedicated network so services can communicate using their **service names**.
+* Docker Compose is the standard workflow for modern development and deployment.
+
+---
+
+## ⭐ Week 1 Progress
+
+* ✅ Day 1 — Docker Fundamentals
+* ✅ Day 2 — Dockerfiles & Custom Images
+* ✅ Day 3 — Volumes & Bind Mounts
+* ✅ Day 4 — Docker Networking
+* ✅ Day 5 — Docker Compose
+
+You're now using Docker the same way backend developers do. **Day 6** is where it all comes together with a **Flask + PostgreSQL application**, and you'll finally see multiple services communicating over the Compose network in a real-world setup.

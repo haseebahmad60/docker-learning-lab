@@ -1,0 +1,400 @@
+I actually like this approach better. 👍 For revision, you don't want a textbook—you want **cheat-sheet notes** that you can read in 5 minutes before an interview or before starting Docker again.
+
+---
+
+# 🚀 Docker Day 2 Cheat Sheet
+
+# 📌 Commands Learned
+
+## Check Docker Version
+
+```bash
+docker --version
+```
+
+Shows the installed Docker CLI version.
+
+---
+
+## Check Docker Client & Server
+
+```bash
+docker version
+```
+
+Checks if Docker Engine is running.
+
+---
+
+## Build an Image
+
+```bash
+docker build -t hello-python .
+```
+
+* `build` → Create image
+* `-t` → Give image a name
+* `hello-python` → Image name
+* `.` → Current folder (build context)
+
+---
+
+## List Images
+
+```bash
+docker images
+```
+
+Shows all Docker images stored locally.
+
+---
+
+## Run a Container
+
+```bash
+docker run hello-python
+```
+
+Creates and starts a container from the image.
+
+---
+
+## Run & Auto Delete Container
+
+```bash
+docker run --rm hello-python
+```
+
+Deletes the container automatically after it exits.
+
+---
+
+## Show All Containers
+
+```bash
+docker ps -a
+```
+
+Lists both running and stopped containers.
+
+---
+
+# 📌 Dockerfile
+
+```dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install -r requirements.txt
+
+CMD ["python", "app.py"]
+```
+
+---
+
+# 📌 Dockerfile Instructions
+
+## FROM
+
+Chooses the **base image** to build on.
+
+```dockerfile
+FROM python:3.12-slim
+```
+
+Think:
+
+> Start with a Linux machine that already has Python installed.
+
+---
+
+## WORKDIR
+
+Changes the working directory inside the image.
+
+```dockerfile
+WORKDIR /app
+```
+
+Equivalent to:
+
+```bash
+cd /app
+```
+
+---
+
+## COPY
+
+Copies files from your computer into the image.
+
+```dockerfile
+COPY . .
+```
+
+* First `.` → Current project folder
+* Second `.` → Current folder inside the image (`/app`)
+
+---
+
+## RUN
+
+Runs commands **while building the image**.
+
+```dockerfile
+RUN pip install -r requirements.txt
+```
+
+Runs only during:
+
+```bash
+docker build
+```
+
+---
+
+## CMD
+
+Runs when the container starts.
+
+```dockerfile
+CMD ["python", "app.py"]
+```
+
+Runs during:
+
+```bash
+docker run
+```
+
+---
+
+# 📌 Important Concepts
+
+## Docker Image
+
+A **read-only template** used to create containers.
+
+Think:
+
+> Recipe → Cake
+
+One image can create many containers.
+
+---
+
+## Docker Container
+
+A **running instance** of an image.
+
+Image = Template
+
+Container = Running application
+
+---
+
+## Image vs Container
+
+| Image          | Container       |
+| -------------- | --------------- |
+| Template       | Running copy    |
+| Read-only      | Writable        |
+| Stored on disk | Running process |
+
+---
+
+## Docker Layers
+
+Every Dockerfile instruction creates a separate layer.
+
+Example:
+
+```text
+FROM
+↓
+
+WORKDIR
+↓
+
+COPY
+↓
+
+RUN
+↓
+
+CMD
+```
+
+Layers make Docker faster.
+
+---
+
+## Layer Caching
+
+Docker rebuilds **only changed layers**.
+
+If only `app.py` changes:
+
+✅ Reuse:
+
+* FROM
+* WORKDIR
+* RUN (if requirements didn't change)
+
+🔄 Rebuild:
+
+* COPY
+* Layers after it
+
+---
+
+## Why Layer Order Matters
+
+❌ Bad
+
+```dockerfile
+COPY . .
+RUN pip install -r requirements.txt
+```
+
+Changing any file reinstalls dependencies.
+
+---
+
+✅ Better
+
+```dockerfile
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+```
+
+Dependencies stay cached.
+
+Builds become much faster.
+
+---
+
+## Build Context
+
+The `.` in
+
+```bash
+docker build -t hello-python .
+```
+
+means:
+
+> Use the current folder as the files available to Docker.
+
+---
+
+## Build vs Run
+
+### Build
+
+```bash
+docker build
+```
+
+Creates an image.
+
+No program runs.
+
+---
+
+### Run
+
+```bash
+docker run
+```
+
+Creates a container and starts the program.
+
+---
+
+## RUN vs CMD
+
+| RUN                | CMD                    |
+| ------------------ | ---------------------- |
+| During image build | During container start |
+| Install/setup      | Start application      |
+
+---
+
+## Why Rebuild?
+
+Changing `app.py` changes **your project**, not the **image**.
+
+The image still contains the old code.
+
+You must rebuild:
+
+```bash
+docker build -t hello-python .
+```
+
+before running again.
+
+---
+
+## Common Errors
+
+### Docker Engine Not Running
+
+```text
+failed to connect to the docker API
+```
+
+✅ Fix:
+
+Start Docker Desktop.
+
+---
+
+### Wrong CMD Syntax
+
+❌
+
+```dockerfile
+CMD { "python", "app.py" }
+```
+
+✅
+
+```dockerfile
+CMD ["python", "app.py"]
+```
+
+Rebuild the image afterward.
+
+---
+
+# 🧠 30-Second Revision
+
+* **Image** → Read-only template.
+* **Container** → Running copy of an image.
+* **Dockerfile** → Instructions to build an image.
+* **FROM** → Base image.
+* **WORKDIR** → Working directory.
+* **COPY** → Copy project files.
+* **RUN** → Runs during `docker build`.
+* **CMD** → Runs during `docker run`.
+* **Layers** → Each instruction creates a layer.
+* **Layer Cache** → Docker rebuilds only changed layers.
+* **`docker build`** → Creates an image.
+* **`docker run`** → Starts a container.
+* **`--rm`** → Deletes the container after it exits.
+
+---
+
+I think this format is ideal for your roadmap. Every day we can keep notes to **2–4 pages max**, with:
+
+1. **Commands first** (quick reference),
+2. **Concepts second** (easy explanations),
+3. **30-second revision** at the end.
+
+After 2 months, you'll have a concise "DevOps Handbook" of your own instead of hundreds of scattered notes.
