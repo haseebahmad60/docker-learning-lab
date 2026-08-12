@@ -1,83 +1,57 @@
 # Docker Learning Lab
 
-A hands-on learning repository for building Docker fundamentals through small daily exercises. The goal is to document practical command usage, container workflows, Dockerfiles, images, volumes, networking, and debugging notes as I learn.
+A seven-day hands-on introduction to Docker. The repository records the commands, small Python services, Dockerfiles, volumes, networks, and Compose configurations I used while learning container fundamentals.
 
-## Overview
+This is a learning journal rather than a production deployment template.
 
-This repository is organized as a weekly lab journal. Each day contains commands, notes, and small runnable examples rather than a single production application.
+## Week 1 progression
 
-Current focus: **Week 1 - Docker fundamentals**
+| Day | Focus | Artifact |
+| --- | --- | --- |
+| 1 | Images, containers, and core CLI commands | Command and concept notes |
+| 2 | Building a custom image | Python app and Dockerfile |
+| 3 | Persistent and bind-mounted data | Counter example and notes |
+| 4 | Container networking | Networked Python example |
+| 5 | Docker Compose | Single-service Compose application |
+| 6 | Multiple services and environment files | Flask and PostgreSQL services |
+| 7 | Capstone review | Flask API, Compose, PostgreSQL service, and runbook |
 
-## Motivation
+## What the lab demonstrates
 
-I am using this repository to turn Docker concepts into repeatable practice. Recruiters and reviewers should be able to see the progression from basic container commands to more realistic development workflows.
+- Building images from Dockerfiles
+- Mapping host and container ports
+- Using bind mounts and named volumes
+- Creating and inspecting container networks
+- Defining services with Docker Compose
+- Supplying configuration through environment files
+- Running a Flask service alongside PostgreSQL
 
-## Current Contents
+## Run the capstone
 
-```text
-docker-learning-lab/
-└── week1/
-    ├── day1/   # Docker fundamentals, commands, and notes
-    ├── day2/   # First Dockerfile and Python container example
-    ├── day3/
-    ├── day4/
-    ├── day5/
-    ├── day6/
-    └── day7/
-```
+Docker Desktop or another Docker Engine with Compose support is required.
 
-## Skills Practiced
-
-- Docker CLI fundamentals
-- Container lifecycle commands
-- Image building with Dockerfiles
-- Running small Python applications in containers
-- Recording commands and notes for repeatable learning
-- Building a habit of daily technical documentation
-
-## Getting Started
-
-Clone the repository:
-
-```bash
+```powershell
 git clone https://github.com/haseebahmad60/docker-learning-lab.git
-cd docker-learning-lab
+cd docker-learning-lab/week1/day7
+Copy-Item .env.example .env
+docker compose up --build
 ```
 
-Open a specific day and follow the notes or commands:
+Open `http://localhost:5000`, then stop the services with:
 
-```bash
-cd week1/day1
+```powershell
+docker compose down
 ```
 
-For days that include a Dockerfile, build and run the example from that day folder:
+The sample credentials are intended only for local learning. Choose different values for any environment that is not disposable.
 
-```bash
-docker build -t docker-learning-day2 .
-docker run --rm docker-learning-day2
-```
+## Current limitation
 
-## Documentation Style
+The Day 6 and Day 7 Compose files start both Flask and PostgreSQL, but the Flask examples do not yet open a database connection. The next meaningful step is to add a health check and a small persistence flow, then verify it with integration tests.
 
-Each day should include one or more of the following:
+## Repository hygiene
 
-- Commands used during practice
-- Notes explaining what each command does
-- Small runnable examples
-- Mistakes or debugging lessons
-- A short reflection on what was learned
-
-## Roadmap
-
-- Add short summaries for each completed day
-- Add a `docker-compose` practice section
-- Add networking and volume examples
-- Add a small multi-container app
-- Add diagrams for image/container lifecycle and compose networking
-
-## Learning Outcomes
-
-This repository shows steady learning, command fluency, and a habit of documenting work. It is intentionally a lab, not a finished product.
+Real `.env` files are ignored. Each multi-service example includes an `.env.example` containing disposable local placeholders that can be copied before running the stack.
 
 ## License
 
