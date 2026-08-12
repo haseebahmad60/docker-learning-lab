@@ -31,7 +31,8 @@ This is a learning journal rather than a production deployment template.
 Docker Desktop or another Docker Engine with Compose support is required.
 
 ```powershell
-cd week1/day7
+git clone https://github.com/haseebahmad60/docker-learning-lab.git
+cd docker-learning-lab/week1/day7
 Copy-Item .env.example .env
 docker compose up --build
 ```
@@ -51,3 +52,7 @@ The Day 6 and Day 7 Compose files start both Flask and PostgreSQL, but the Flask
 ## Repository hygiene
 
 Real `.env` files are ignored. Each multi-service example includes an `.env.example` containing disposable local placeholders that can be copied before running the stack.
+
+## License
+
+No license has been selected yet.
