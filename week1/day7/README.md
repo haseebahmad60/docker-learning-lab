@@ -1,59 +1,55 @@
 # Docker Week 1 Capstone
 
-## Overview
+A small Flask API packaged with Docker and run beside PostgreSQL using Docker Compose. This capstone brings together the image, port, volume, network, environment, and Compose concepts practiced earlier in the week.
 
-A simple Flask API running alongside PostgreSQL using Docker Compose.
+## Stack
 
-## Technologies Used
-
-- Docker
-- Docker Compose
 - Python 3.12
 - Flask
+- Docker and Docker Compose
 - PostgreSQL 17
 
-## Folder Structure
+## Files
 
+```text
+|-- app.py           # Flask API
+|-- Dockerfile       # Application image
+|-- compose.yaml     # Flask and PostgreSQL services
+|-- requirements.txt # Python dependency
+|-- .env.example     # Disposable local database settings
+|-- notes.md         # Learning notes
+`-- README.md
 ```
-docker-capstone/
-├── app.py
-├── Dockerfile
-├── compose.yaml
-├── requirements.txt
-├── .env
-├── README.md
-└── notes.md
-```
 
-## How to Run
+## Run it
 
-```bash
+Create the local environment file, then build and start the services:
+
+```powershell
+Copy-Item .env.example .env
 docker compose up --build
 ```
 
-Visit:
+Open `http://localhost:5000`. The endpoint returns a JSON message, the container hostname, and the current time.
 
-```
-http://localhost:5000
-```
+Useful inspection commands:
 
-## Useful Commands
-
-```bash
-docker compose up --build
-docker compose down
+```powershell
 docker compose ps
 docker compose logs
 docker compose exec app bash
 docker compose exec db psql -U postgres
+docker compose down
 ```
 
-## What I Learned
+## What I learned
 
-- Docker Images
-- Containers
-- Dockerfiles
-- Volumes
-- Networks
-- Docker Compose
-- Multi-container applications
+- Building and running a Flask image
+- Starting related services through one Compose file
+- Compose networking and service discovery
+- Named volumes for PostgreSQL data
+- Keeping local configuration out of version control
+
+## Limitation
+
+The database service is running, but the Flask application does not yet connect to it. This capstone demonstrates orchestration; database integration is the next step.
